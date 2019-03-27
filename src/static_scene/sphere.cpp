@@ -23,12 +23,12 @@ bool Sphere::test(const Ray& r, double& t1, double& t2) const {
 	else {
 		double t1a = (-b + sqrt(b*b - 4 * a*c)) / (2 * a);
 		double t2a = (-b - sqrt(b*b - 4 * a*c)) / (2 * a);
-		if (t2a > r.max_t || t2a < r.min_t) {
-			return false;
+		if ((t2a < r.max_t && t2a > r.min_t) || (t1a < r.max_t && t1a > r.min_t)) {
+			t1 = t2a;
+			t2 = t1a;
+			return true;
 		}
-		t1 = t2a;
-		t2 = t1a;
-		return true;
+		return false;
 	}
 }
 
