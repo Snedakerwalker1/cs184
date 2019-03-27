@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <style>  
@@ -9,31 +9,85 @@
       padding-left: 100px;  
     }  
   </style> 
-<title>Your Name  |  CS 184</title>
+<title>Walker Snedaker  |  CS 184</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
 </head>
 <body>
 <br />
-<h1 align="middle">Assignment 3: PathTracer</h1>
-    <h2 align="middle">Your Name</h2>
+<h1 align="middle">Assignment 3: PathTracer part 2</h1>
+    <h2 align="middle">Walker Snedaker</h2>
 
     <div class="padded">
         <p>Use this section to write an overview of the assignment. All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
         <o>The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p> 
         <p>If you are well-versed in web development, feel free to ditch this template and make a better looking page. Just make sure that you include all the components as we've laid them out here. </p>
 
-    <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
-        <p>Describe what you did in Part 1. etc...</p>
+    <h2 align="middle">Part 1: Mirror and Glass</h2>
+        <p>In Part 1 I implemented the BRDF set up for glass objects and perfect mirror objects. First for Mirrors I implemented the BRDF by simpy taking the out going ray from the surface to be the vector in object space coordinates as the vector with negative x and y direction and the same z direction, with the specturm beign that of an ideal mirror and thus the reflectance divided by the angle from the normal. Next for Glass I implementd the BRDF by first calculating if there is total internal relfection and if these is than returning the reflection as if it is a mirror, if there is not total internal reflection I calculate Schlick's Approximation and use it as our random chance paramater to decide if the ray that impacts the surface reflects our of the surface or refracts into it. If the incoming ray refracts I use snells law to calculate the outgoing ray and finaly calculate the outgoing irradiance by taking it to be that of the reflection divided by the square of the snells law factor eta.</p>
+        <p>Now lets look at the spheres scene and see how increasing the max number of bounces for each reveals interesting new multibounce effects. To start the first multibounce effect we witness is that at one bounce both the mirrored sphere and glass sphere are completely dark, while at two bounces the light has time to bounce onto the schene then onto the mirrored sphere then to the camera, but the light is still bouncing in the glass ball and has yet to move through to the camera. Then at 3 bounces we can see the glass ball as the light leaves it, now hitting the camera, but the light that bounces from the glass ball to other parts of the schene has yet to bounce to the camera, so the ball casts a shadow and is dark on the mirror. Then at 4 bounces the glass ball reflects form the mirrored ball to the camera, and the glass ball iluminates a spot on the ground as we would expect. Finaly we reach the maximum number of multibounce effects when the lights reflection of the mirrored ball makes it through the glass ball illuminating a patch on the wall. Its seen that this is the max number of effects since the 100 bounce version reveals no more effects.</p>
         <div align="center">
             <table style="width=100%">
                 <tr>
                     <td align="middle">
-                    <img src="images/example_image.png" width="480px" />
-                    <figcaption align="middle">Results Caption: my bunny is the bounciest bunny</figcaption>
+                    <img src="images/spheres0.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 0.</figcaption>
+                    <td align="middle">
+                    <img src="images/spheres1.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 1.</figcaption>
+                </tr>
+                <br />
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres2.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 2.</figcaption>
+                    <td align="middle">
+                    <img src="images/spheres3.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 3.</figcaption>
+                </tr>
+                <br />
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres4.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 4.</figcaption>
+                    <td align="middle">
+                    <img src="images/spheres5.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 5.</figcaption>
+                </tr>
+                <br />
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres100.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 100.</figcaption>
                 </tr>
             </table>
         </div>
+        <p> Finaly here are a few other images rendered usign the code in this seciton. </p> 
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres7.png" width="480px" />
+                    <figcaption align="middle">CBspheres run with maxdepth 7 and 256 samples per pixel</figcaption>
+                    <td align="middle">
+                    <img src="images/dragon.png" width="480px" />
+                    <figcaption align="middle">CBdragon run with maxdepth 7 and 64 sampler per pixel.</figcaption>
+                </tr>
+                <br />
+                <tr>
+                    <td align="middle">
+                    <img src="images/lucy.png" width="480px" />
+                    <figcaption align="middle">CBlucy run with maxdepth 7 and 64 samples per pixel</figcaption>
+                    <td align="middle">
+                    <img src="images/lucy1.png" width="480px" />
+                    <figcaption align="middle">CBlucy run with maxdepth 7 and 256 sampler per pixel.</figcaption>
+                </tr>
+            </table>
+        </div>
+
+
+
+
         <p>Here is an example of how to include a simple formula:</p>
         <p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
         <p>or, alternatively, you can include an SVG image of a LaTex formula.</p>
