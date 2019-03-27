@@ -93,6 +93,7 @@ Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) 
 		*pdf = pwh/(4 *dot(*wi, h));
 		return MicrofacetBSDF::f(wo, *wi);
 	}
+	*pdf = 0;
 	return Spectrum();
 }
 
