@@ -169,10 +169,7 @@ namespace CGL {
 	  //}
 	  Vector3D w_in = Vector3D();
 	  float pdf = 1 / (2 * PI);
-	  Spectrum sample = Spectrum();
-	  do {
-		  sample = isect.bsdf->sample_f(w_out, &w_in, &pdf);
-	  } while (pdf == 0);
+	  Spectrum sample = isect.bsdf->sample_f(w_out, &w_in, &pdf);
 	  // set russian rulet number to .6
 	  double rrn = .6;
 	  //terminate if conrrn is false
