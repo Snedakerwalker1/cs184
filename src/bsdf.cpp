@@ -37,8 +37,9 @@ Spectrum MirrorBSDF::f(const Vector3D& wo, const Vector3D& wi) {
 Spectrum MirrorBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) {
   // TODO: 1.2
   // Using BSDF::reflect(), implement sample_f for a mirror surface
-
-  return Spectrum();
+	*pdf= 1;
+	reflect(wo,wi);
+	return reflectance/(abs_cos_theta(*wi));
 }
 
 // Microfacet BSDF //
@@ -100,16 +101,41 @@ Spectrum GlassBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) {
 
   // TODO: 1.4
   // Compute Fresnel coefficient and either reflect or refract based on it.
-
-  return Spectrum();
+	if (!refract(wo,wi, this->ior)) {
+		reflect(wo, wi);
+		*pdf = 1;
+		return reflectance / (abs_cos_theta(*wi));
+	}
+	float schlR = (1 - this->ior)/(1 + this->ior);
+	float R = schlR*schlR;
+	if (coin_flip(R)) {
+		reflect(wo, wi);
+		*pdf = R;
+		return R * reflectance / (abs_cos_theta(*wi));
+	}
+	else {
+		refract(wo, wi, this->ior);
+		*pdf = 1 - R;
+		float eta;
+		if (wo.z < 0) {
+			//wo starts out inside
+			eta = ior;
+		}
+		else {
+			eta = 1. / ior;
+		}
+		return (1. - R)*transmittance / abs_cos_theta(*wi) / (eta*eta) ;
+	}
+	return Spectrum();
 }
 
 void BSDF::reflect(const Vector3D& wo, Vector3D* wi) {
 
   // TODO: 1.1
   // Implement reflection of wo about normal (0,0,1) and store result in wi.
-
-
+	wi->x = -1*wo.x;
+	wi->y = -1 * wo.y;
+	wi->z = wo.z;
 }
 
 bool BSDF::refract(const Vector3D& wo, Vector3D* wi, float ior) {
@@ -119,8 +145,25 @@ bool BSDF::refract(const Vector3D& wo, Vector3D* wi, float ior) {
   // Return false if refraction does not occur due to total internal reflection
   // and true otherwise. When dot(wo,n) is positive, then wo corresponds to a
   // ray entering the surface through vacuum.
-
-  return true;
+	float n;
+	int mul;
+	if (wo.z < 0) {
+		//wo starts out inside
+		n = ior;
+		mul = 1;
+	}
+	else {
+		n = 1. / ior;
+		mul = -1;
+	}
+	float val = 1 - n * n*(1 - (wo.z*wo.z));
+	if (val < 0) {
+		return false;
+	}
+	wi->x = -n * wo.x;
+	wi->y = -n * wo.y;
+	wi->z = mul * sqrt(val);
+	return true;
 }
 
 // Emission BSDF //
