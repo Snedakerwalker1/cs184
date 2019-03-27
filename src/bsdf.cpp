@@ -82,15 +82,15 @@ Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) 
   //       and return the sampled BRDF value.
 	Vector2D r = this->sampler.get_sample();
 	float thetaH = atan(sqrt(-alpha*alpha*log(1. - r.x)));
-	float phiH = 2 * PI*r.y;
+	float phiH = 2. * PI*r.y;
 	// may be wrong idk
 	Vector3D h = Vector3D(sin(thetaH)*cos(phiH), sin(thetaH)*sin(phiH), cos(thetaH));
-	*wi = 2*dot(wo, h)*h - wo;
+	*wi = 2.*dot(wo, h)*h - wo;
 	if (wo.z > 0 && wi->z > 0) {
-		float ptheta = 2 * sin_theta(h)*exp(-1 * sin_theta(h)*sin_theta(h) / (alpha*alpha*cos_theta(h)*cos_theta(h))) / (alpha*alpha*cos_theta(h)*cos_theta(h)*cos_theta(h));
-		float pphi = 1/(2*PI);
+		float ptheta = 2. * sin_theta(h)*exp(-1 * sin_theta(h)*sin_theta(h) / (alpha*alpha*cos_theta(h)*cos_theta(h))) / (alpha*alpha*cos_theta(h)*cos_theta(h)*cos_theta(h));
+		float pphi = 1./(2.*PI);
 		float pwh = ptheta * pphi / (sin_theta(h));
-		*pdf = pwh/(4 *dot(*wi, h));
+		*pdf = pwh/(4. *dot(*wi, h));
 		return MicrofacetBSDF::f(wo, *wi);
 	}
 	*pdf = 0;
