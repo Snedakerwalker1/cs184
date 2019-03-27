@@ -190,7 +190,7 @@ namespace CGL {
 			  return L_out + (recurse * costerm * sample / (pdf));
 		  }
 	  }
-	  if (conrrn && (max_ray_depth > 1 || bounce.depth >= 1)) {
+	  if (conrrn && (max_ray_depth > 1 && bounce.depth >= 1)) {
 		  Intersection newInt;
 		  if (bvh->intersect(bounce, &newInt)) {
 			  Spectrum recurse = at_least_one_bounce_radiance(bounce, newInt);
