@@ -168,18 +168,18 @@ namespace CGL {
 	  //	  return L_out;
 	  //}
 	  Vector3D w_in = Vector3D();
-	  float pdf = 1 / (2 * PI);
-	  Spectrum sample = isect.bsdf->sample_f(w_out, &w_in, &pdf);
-	  if (pdf == 0) {
-		  pdf = 1 / (2 * PI);
-	  }
+	  float pdf = 1. / (2. * PI);
+	  Spectrum sample = Spectrum();
+	  do {
+		  sample = isect.bsdf->sample_f(w_out, &w_in, &pdf);
+	  } while (pdf == 0);
 	  // set russian rulet number to .6
 	  double rrn = .6;
 	  //terminate if conrrn is false
 	  bool conrrn = coin_flip(rrn);
 	  Vector3D world = o2w * w_in;
 	  Ray bounce = Ray(hit_p + EPS_D * world, world);
-	  bounce.depth = r.depth - 1;
+	  bounce.depth = r.depth - 1.;
 	  if (max_ray_depth > 1 && r.depth == max_ray_depth) {
 		  Intersection newInt;
 		  if (bvh->intersect(bounce, &newInt)) {

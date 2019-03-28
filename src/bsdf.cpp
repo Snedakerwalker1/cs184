@@ -52,8 +52,8 @@ double MicrofacetBSDF::D(const Vector3D& h) {
   // TODO: 2.2
   // Compute Beckmann normal distribution function (NDF) here.
   // You will need the roughness alpha.
-	float dh = exp(-(sin_theta(h) / cos_theta(h))*(sin_theta(h) / cos_theta(h)) / (alpha*alpha));
-	dh = dh / PI / (alpha*alpha) / (cos_theta(h)*cos_theta(h)*cos_theta(h)*cos_theta(h));
+	float dh = exp(-(sin_theta(h)*sin_theta(h)) / (cos_theta(h)*cos_theta(h)*alpha*alpha));
+	dh = dh / (PI *(alpha*alpha) *(cos_theta(h)*cos_theta(h)*cos_theta(h)*cos_theta(h)));
 	return dh;
 }
 
@@ -61,17 +61,18 @@ Spectrum MicrofacetBSDF::F(const Vector3D& wi) {
   // TODO: 2.3
   // Compute Fresnel term for reflection on dielectric-conductor interface.
   // You will need both eta and etaK, both of which are Spectrum.
-	Spectrum rs = ((eta*eta + k*k) - 2 * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta*eta + k * k) + 2 * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
-	Spectrum rp = ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) - 2 * eta*cos_theta(wi) + 1) / ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) + 2 * eta*cos_theta(wi) + 1);
-	return rs + rp / 2;
+	Spectrum rs = ((eta*eta + k*k) - 2. * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta*eta + k * k) + 2. * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
+	Spectrum rp = ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) - 2. * eta*cos_theta(wi) + 1.) / ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) + 2. * eta*cos_theta(wi) + 1.);
+	return rs + rp / 2.;
 }
 
 Spectrum MicrofacetBSDF::f(const Vector3D& wo, const Vector3D& wi) {
   // TODO: 2.1
   // Implement microfacet model here
-	Vector3D h = (wo + wi)/sqrt(dot((wo + wi), (wo + wi)));
+	Vector3D sum = wo + wi;
+	Vector3D h = sum/sqrt(dot(sum, sum));
 	Spectrum val = F(wi)*G(wo, wi)*D(h);
-	val = val / 4 / (wo.z) / (wi.z);
+	val = val / (4.*(wo.z)*(wi.z));
 	return val;
 }
 
