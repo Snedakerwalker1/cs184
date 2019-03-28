@@ -61,9 +61,14 @@ Spectrum MicrofacetBSDF::F(const Vector3D& wi) {
   // TODO: 2.3
   // Compute Fresnel term for reflection on dielectric-conductor interface.
   // You will need both eta and etaK, both of which are Spectrum.
-	Spectrum rs = ((eta*eta + k*k) - 2. * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta*eta + k * k) + 2. * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
-	Spectrum rp = ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) - 2. * eta*cos_theta(wi) + 1.) / ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) + 2. * eta*cos_theta(wi) + 1.);
-	return (rs + rp) / 2.;
+	
+	float rsr = ((eta.r*eta.r+ k.r*k.r) - 2. * eta.r*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta.r*eta.r+ k.r * k.r) + 2. * eta.r*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
+	float rpr = ((eta.r*eta.r + k.r * k.r)*cos_theta(wi)*cos_theta(wi) - 2. * eta.r*cos_theta(wi) + 1) / ((eta.r*eta.r + k.r * k.r)*cos_theta(wi)*cos_theta(wi) + 2. * eta.r*cos_theta(wi) + 1);
+	float rsg = ((eta.g*eta.g + k.g*k.g) - 2. * eta.g*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta.g*eta.g + k.g * k.g) + 2. * eta.g*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
+	float rpg = ((eta.g*eta.g + k.g * k.g)*cos_theta(wi)*cos_theta(wi) - 2. * eta.g*cos_theta(wi) + 1) / ((eta.g*eta.g + k.g * k.g)*cos_theta(wi)*cos_theta(wi) + 2. * eta.g*cos_theta(wi) + 1);
+	float rsb = ((eta.b*eta.b + k.b*k.b) - 2. * eta.b*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta.b*eta.b + k.b * k.b) + 2. * eta.b*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
+	float rpb = ((eta.b*eta.b + k.b * k.b)*cos_theta(wi)*cos_theta(wi) - 2. * eta.b*cos_theta(wi) + 1) / ((eta.b*eta.b+ k.b * k.b)*cos_theta(wi)*cos_theta(wi) + 2. * eta.b*cos_theta(wi) + 1);
+	return Spectrum((rsr + rpr)/2., (rsg + rpg)/ 2.,(rsb + rpb)/ 2.);
 }
 
 Spectrum MicrofacetBSDF::f(const Vector3D& wo, const Vector3D& wi) {
