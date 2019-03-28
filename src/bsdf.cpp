@@ -63,12 +63,15 @@ Spectrum MicrofacetBSDF::F(const Vector3D& wi) {
   // You will need both eta and etaK, both of which are Spectrum.
 	
 	float rsr = ((eta.r*eta.r+ k.r*k.r) - 2. * eta.r*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta.r*eta.r+ k.r * k.r) + 2. * eta.r*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
-	float rpr = ((eta.r*eta.r + k.r * k.r)*cos_theta(wi)*cos_theta(wi) - 2. * eta.r*cos_theta(wi) + 1) / ((eta.r*eta.r + k.r * k.r)*cos_theta(wi)*cos_theta(wi) + 2. * eta.r*cos_theta(wi) + 1);
+	float rpr = ((eta.r*eta.r + k.r * k.r)*cos_theta(wi)*cos_theta(wi) - 2. * eta.r*cos_theta(wi) + 1.) / ((eta.r*eta.r + k.r * k.r)*cos_theta(wi)*cos_theta(wi) + 2. * eta.r*cos_theta(wi) + 1.);
 	float rsg = ((eta.g*eta.g + k.g*k.g) - 2. * eta.g*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta.g*eta.g + k.g * k.g) + 2. * eta.g*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
-	float rpg = ((eta.g*eta.g + k.g * k.g)*cos_theta(wi)*cos_theta(wi) - 2. * eta.g*cos_theta(wi) + 1) / ((eta.g*eta.g + k.g * k.g)*cos_theta(wi)*cos_theta(wi) + 2. * eta.g*cos_theta(wi) + 1);
+	float rpg = ((eta.g*eta.g + k.g * k.g)*cos_theta(wi)*cos_theta(wi) - 2. * eta.g*cos_theta(wi) + 1.) / ((eta.g*eta.g + k.g * k.g)*cos_theta(wi)*cos_theta(wi) + 2. * eta.g*cos_theta(wi) + 1.);
 	float rsb = ((eta.b*eta.b + k.b*k.b) - 2. * eta.b*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta.b*eta.b + k.b * k.b) + 2. * eta.b*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
-	float rpb = ((eta.b*eta.b + k.b * k.b)*cos_theta(wi)*cos_theta(wi) - 2. * eta.b*cos_theta(wi) + 1) / ((eta.b*eta.b+ k.b * k.b)*cos_theta(wi)*cos_theta(wi) + 2. * eta.b*cos_theta(wi) + 1);
-	return Spectrum((rsr + rpr)/2., (rsg + rpg)/ 2.,(rsb + rpb)/ 2.);
+	float rpb = ((eta.b*eta.b + k.b * k.b)*cos_theta(wi)*cos_theta(wi) - 2. * eta.b*cos_theta(wi) + 1.) / ((eta.b*eta.b+ k.b * k.b)*cos_theta(wi)*cos_theta(wi) + 2. * eta.b*cos_theta(wi) + 1.);
+	float r = (rsr + rpr) / 2.0;
+	float g = (rsg + rpg) / 2.0;
+	float b = (rsb + rpb) / 2.0;
+	return Spectrum(r, g, b);
 }
 
 Spectrum MicrofacetBSDF::f(const Vector3D& wo, const Vector3D& wi) {
@@ -87,8 +90,8 @@ Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) 
   // *Importance* sample Beckmann normal distribution function (NDF) here.
   // Note: You should fill in the sampled direction *wi and the corresponding *pdf,
   //       and return the sampled BRDF value.
-	*wi = cosineHemisphereSampler.get_sample(pdf); //placeholder
-	return MicrofacetBSDF::f(wo, *wi);
+	//*wi = cosineHemisphereSampler.get_sample(pdf); //placeholder
+	//return MicrofacetBSDF::f(wo, *wi);
 	Vector2D r = this->sampler.get_sample();
 	float thetaH = atan(sqrt(-alpha*alpha*log(1. - r.x)));
 	float phiH = 2. * PI*r.y;
@@ -103,8 +106,13 @@ Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) 
 		*pdf = pwh/(4. * dot(*wi, h));
 		return MicrofacetBSDF::f(wo, *wi);
 	}
-	*pdf = 0.;
-	return Spectrum();
+	else if (wo.z > 0 && wi->z <= 0) {
+		*pdf = 0;
+		return Spectrum();
+	}
+	else {
+		return Spectrum();
+	}
 }
 
 // Refraction BSDF //
