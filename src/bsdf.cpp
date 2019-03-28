@@ -111,6 +111,7 @@ Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) 
 		return Spectrum();
 	}
 	else {
+		*pdf = 0;
 		return Spectrum();
 	}
 }
