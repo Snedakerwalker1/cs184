@@ -90,8 +90,8 @@ Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) 
   // *Importance* sample Beckmann normal distribution function (NDF) here.
   // Note: You should fill in the sampled direction *wi and the corresponding *pdf,
   //       and return the sampled BRDF value.
-	*wi = cosineHemisphereSampler.get_sample(pdf); //placeholder
-	return MicrofacetBSDF::f(wo, *wi);
+	//*wi = cosineHemisphereSampler.get_sample(pdf); //placeholder
+	//return MicrofacetBSDF::f(wo, *wi);
 	Vector2D r = this->sampler.get_sample();
 	float thetaH = atan(sqrt(-alpha*alpha*log(1. - r.x)));
 	float phiH = 2. * PI*r.y;
