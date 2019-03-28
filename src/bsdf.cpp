@@ -63,18 +63,19 @@ Spectrum MicrofacetBSDF::F(const Vector3D& wi) {
   // You will need both eta and etaK, both of which are Spectrum.
 	Spectrum rs = ((eta*eta + k*k) - 2. * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi)) / ((eta*eta + k * k) + 2. * eta*cos_theta(wi) + cos_theta(wi)*cos_theta(wi));
 	Spectrum rp = ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) - 2. * eta*cos_theta(wi) + 1.) / ((eta*eta + k * k)*cos_theta(wi)*cos_theta(wi) + 2. * eta*cos_theta(wi) + 1.);
-	return rs + rp / 2.;
+	return (rs + rp) / 2.;
 }
 
 Spectrum MicrofacetBSDF::f(const Vector3D& wo, const Vector3D& wi) {
-  // TODO: 2.1
-  // Implement microfacet model here
+	// TODO: 2.1
+	// Implement microfacet model here
 	Vector3D h = wo + wi;
 	h.normalize();
 	Spectrum val = F(wi)*G(wo, wi)*D(h);
 	val = val / (4.*(wo.z)*(wi.z));
 	return val;
 }
+
 
 Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) {
   // TODO: 2.4
