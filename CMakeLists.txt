@@ -4,7 +4,7 @@ project(PathTracer)
 #-------------------------------------------------------------------------------
 # Build options
 #-------------------------------------------------------------------------------
-option(BUILD_3-1       "Build 3-1 code from source"    ON)
+option(BUILD_3-1       "Build 3-1 code from source"    OFF)
 option(BUILD_DEBUG     "Build with debug settings"     OFF)
 option(BUILD_DOCS      "Build documentation"           OFF)
 
