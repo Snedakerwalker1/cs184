@@ -69,8 +69,8 @@ Spectrum MicrofacetBSDF::F(const Vector3D& wi) {
 Spectrum MicrofacetBSDF::f(const Vector3D& wo, const Vector3D& wi) {
   // TODO: 2.1
   // Implement microfacet model here
-	Vector3D sum = wo + wi;
-	Vector3D h = sum/sqrt(dot(sum, sum));
+	Vector3D h = wo + wi;
+	h.normalize();
 	Spectrum val = F(wi)*G(wo, wi)*D(h);
 	val = val / (4.*(wo.z)*(wi.z));
 	return val;
@@ -88,6 +88,7 @@ Spectrum MicrofacetBSDF::sample_f(const Vector3D& wo, Vector3D* wi, float* pdf) 
 	float phiH = 2. * PI*r.y;
 	// may be wrong idk
 	Vector3D h = Vector3D(sin(thetaH)*cos(phiH), sin(thetaH)*sin(phiH), cos(thetaH));
+	h.normalize();
 	*wi = 2.*dot(wo, h)*h - wo;
 	if (wo.z > 0 && wi->z > 0) {
 		float ptheta = 2. * sin_theta(h)*exp(-sin_theta(h)*sin_theta(h) / (alpha*alpha*cos_theta(h)*cos_theta(h))) / (alpha*alpha*cos_theta(h)*cos_theta(h)*cos_theta(h));
