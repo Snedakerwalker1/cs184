@@ -140,7 +140,7 @@ Spectrum EnvironmentLight::sample_dir(const Ray& r) const {
   // TODO: 3.1
 	// Use the helper functions to convert r.d into (x,y)
 	// then bilerp the return value
-	Vector2D xy = theta_phi_to_xy(dir_to_theta_phi(r.o));
+	Vector2D xy = theta_phi_to_xy(dir_to_theta_phi(r.d));
 	return bilerp(xy);
 }
 
