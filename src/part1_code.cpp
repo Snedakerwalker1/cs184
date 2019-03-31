@@ -210,9 +210,10 @@ namespace CGL {
 	  // You will extend this in assignment 3-2. 
 	  // If no intersection occurs, we simply return black.
 	  // This changes if you implement hemispherical lighting for extra credit.
-
 	  if (!bvh->intersect(r, &isect))
-		  return L_out;
+		  return envLight ? envLight->sample_dir(r) : L_out;
+	  //if (!bvh->intersect(r, &isect))
+	//	  return L_out;
 
 	  // This line returns a color depending only on the normal vector 
 	  // to the surface at the intersection point.
