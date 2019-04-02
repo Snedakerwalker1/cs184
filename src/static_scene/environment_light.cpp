@@ -36,13 +36,42 @@ void EnvironmentLight::init() {
             sum += pdf_envmap[w * j + i];
 		}
 	}
+	// inef loop time 
+	for (int j = 0; j < h; ++j) {
+		for (int i = 0; i < w; ++i) {
+			pdf_envmap[w * j + i] = pdf_envmap[w * j + i] / sum;
+		}
+	}
+	for (int j = 0; j < h; ++j) {
+		marginal_y[j] = 0;
+		for (int j2 = 0; j2 < j; ++j2) {
+			for (int i = 0; i < w; ++i) {
+				marginal_y[j] += pdf_envmap[w*j2 + i];
+			}
+		}
+	}
+	for (int j = 0; j < h; ++j) {
+		for (int i = 0; i < w; ++i) {
+			double pxi = 0.0;
+			for (int i2 = 0; i2 < i; ++i2) {
+				pxi += pdf_envmap[w * j + i2];
+			}
+			double div = 1;
+			if (j == 0) {
+				div = marginal_y[j];
+			} else {
+				div = marginal_y[j] - marginal_y[j - 1];
+			}
+			pxi = pxi / div;
+			conds_y[j*w + i] = pxi;
+		}
+	}
 
   // TODO: 3.3 step 2
   // Store the marginal distribution for y to marginal_y. Make sure to normalize pdf_envmap.
 
   // TODO: 3.3 step 3
   // Store the conditional distribution for x given y to conds_y
-
 
 	if (true) {
     std::cout << "Saving out probability_debug image for debug." << std::endl;
@@ -129,11 +158,29 @@ Spectrum EnvironmentLight::sample_L(const Vector3D& p, Vector3D* wi,
                                     float* pdf) const {
   // TODO: 3.2
 	// First implement uniform sphere sampling for the environment light
+	
+	if (false) {
+		*pdf = 1 / (4 * PI);
+		*distToLight = INF_D;
+		Vector3D sample = sampler_uniform_sphere.get_sample();
+		*wi = sample;
+		Vector2D theta_phi = dir_to_theta_phi(sample);
+		return bilerp(theta_phi_to_xy(theta_phi));
+	}
 
   // TODO: 3.3
 	// Later implement full importance sampling
-
-  return Spectrum();
+	uint32_t w = envMap->w, h = envMap->h;
+	Vector2D unifSample = sampler_uniform2d.get_sample();
+	//(theta, phi) = (pi*j/h,2*pi*i/w) for pdf (pdf_envmap[w * j + i])
+	int upperY = std::upper_bound(marginal_y, marginal_y + h, unifSample.y) - marginal_y;
+	int upperX = std::upper_bound(conds_y + w*upperY, conds_y + w*(upperY) + w, unifSample.x) - (conds_y + w * upperY);
+	//Vector2D xy = Vector2D(upperX, upperY);
+	Vector2D thetaPhi = xy_to_theta_phi(Vector2D(upperX, upperY));
+	*wi = theta_phi_to_dir(thetaPhi);
+	*distToLight = INF_D;
+	*pdf = (pdf_envmap[w*upperY + upperX] * w*h) / (2*PI*PI*sin(thetaPhi.x));
+	return envMap->data[w*upperY + upperX];
 }
 
 Spectrum EnvironmentLight::sample_dir(const Ray& r) const {

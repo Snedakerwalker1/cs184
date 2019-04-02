@@ -208,9 +208,54 @@
             </div>
 
 
+            <h2 align="middle">Part 3: Environment light</h2>
+            <p>In this third part of this project I implemented a scemea for environment lighting. Environment lighting places our schene in a full three dimensional space where ligh can and does come from all directions, this allows us to model schenes that exist in a space that is not just a black box like environment. This is done by settign an sphererical surface around our scene that is infinately far away and is the background for our scene. To use this environment to sample the lighting of the scene we take random samples of the environment in one of two ways, either through uniform spherical sampling or through importance sampling. Uniform spherical sampling simply takes a random sample in the sphere with equal probability, while importance sampling calculates the brightness of grid points on our sphere and assigns each grid point a probability that it will yeild an important value by how bright it is, we then sample points bassed on these probabilities. </p>
+            <p> Now lets look at some images rendered in the following environment</p>
+            <div align="center">
+                <table style="width=100%">
+                    <tr>
+                        <td align="middle">
+                            <img src="images/exrcap.JPG" width="480px" />
+                            <figcaption align="middle"> This is the environmnet used in this part.</figcaption>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <p> First lets render bunny_unlit.dae with 4 samples per pixel and 64 sampler per light with both hemisphere and importance sampling. As we can see by these two images below the importance sampled image has far less noise and is much more illuminated. this makes sense since importance sampling takes more samples from the higher light density secitons of the environment and thus will result in a brighter scene if our schene has a large amount of darker non light background objects, as we can see our scene does have. </p>
+            <div align="center">
+                <table style="width=100%">
+                    <tr>
+                        <td align="middle">
+                            <img src="images/bunU64m.png" width="480px" />
+                            <figcaption align="middle"> This is the uniform hemispher sampled image</figcaption>
+                        </td>
+                        <td align="middle">
+                            <img src="images/bung4.png" width="480px" />
+                            <figcaption align="middle"> This is the importance sampled image</figcaption>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <p>Next lets render the bunny_microfacet_cu_unlit.dae file with 4 samples per pixel and 64 samples per light and a max of 5 bounces with both hemisphere and importance sampling. As we can see once again the importance sampling rendered an image with much less noise. This makes sense since the hemisphere sampled image should take much longer to converge. It is interesting to see that even with the small number of samples the copper bunny is starting to look matalic in the hemisphere sampling, as well it is interesting to see that much more of the copper color of the bunny is noticable with environment lighting that was scene in similar tests in part 2. </p>
+            <div align="center">
+                <table style="width=100%">
+                    <tr>
+                        <td align="middle">
+                            <img src="images/bunU64HI5.png" width="480px" />
+                            <figcaption align="middle"> This is the uniform hemispher sampled image</figcaption>
+                        </td>
+                        <td align="middle">
+                            <img src="images/bunU64I5.png" width="480px" />
+                            <figcaption align="middle"> This is the importance sampled image</figcaption>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
 
-            <p>Here is an example of how to include a simple formula:</p>
+
+
+            </p><p>Here is an example of how to include a simple formula:</p>
             <p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
             <p>or, alternatively, you can include an SVG image of a LaTex formula.</p>
             <p>This time it's your job to copy-paste in the rest of the sections :)</p>

@@ -174,8 +174,33 @@ Ray Camera::generate_ray_for_thin_lens(double x, double y, double rndR, double r
     // TODO: 4.1
     // compute position and direction of ray from the input sensor sample coordinate.
     // Note: use rndR and rndTheta to uniformly sample a unit disk.
-
-    return Ray(Vector3D(), Vector3D());
+	//this makes the red ray
+	Vector3D botomLeft = Vector3D(-tan(radians(hFov)*.5), -tan(radians(vFov)*.5), -1);
+	Vector3D topRight = Vector3D(tan(radians(hFov)*.5), tan(radians(vFov)*.5), -1);
+	Vector3D d = Vector3D((1 - x)*botomLeft.x + x * topRight.x, (1 - y)*botomLeft.y + y * topRight.y, -1);
+	//d = c2w * d;
+	//d = d - pos;
+	d.normalize();
+	//Ray red_ray = Ray(pos, d);
+	//red_ray.min_t = nClip;
+	//red_ray.max_t = fClip;
+	Vector3D plens = Vector3D(lensRadius*cos(rndTheta)*sqrt(rndR), lensRadius*sin(rndTheta)*sqrt(rndR),0);
+	//Vector3D curr_pixel = Vector3D(0,0, 1);
+	if (d.z == 0) {
+		return Ray(Vector3D(), Vector3D());
+	}
+	double t = (-focalDistance)/ d.z;
+	Vector3D pfocus = t * d;
+	Vector3D dir = pfocus - plens;
+	dir.normalize();
+	dir = c2w * dir;
+	dir.normalize();
+	plens = c2w * plens;
+	plens += pos;
+	Ray blue_ray = Ray(plens, dir);
+	blue_ray.min_t = nClip;
+	blue_ray.max_t = fClip;
+    return blue_ray;
 }
 
 
