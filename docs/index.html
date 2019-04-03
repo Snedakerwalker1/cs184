@@ -19,13 +19,10 @@
     <h2 align="middle">Walker Snedaker</h2>
 
     <div class="padded">
-        <p>Use this section to write an overview of the assignment. All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
-        <o>
-            The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p>
-            <p>If you are well-versed in web development, feel free to ditch this template and make a better looking page. Just make sure that you include all the components as we've laid them out here. </p>
+        <p>Overview: In this project I implemeted three major improvements that build on the previos project. The first is a set of new BSDF fucntions that allow me to render mirrored, glass, and microfaseted materials, which are things like brushed or glossy metels. Next I implemented a new lighting set up for the project which allows me to add environment lighting to scenes, creating more realistic scenes that aren't essentialy in a dark empty room. Finaly I implemented a thin lens camera model which is essentialy a model that allows the scenes I create to look as if they were taken with an actual camera, with a thin lens, focal point, and apature. These combine to allow me, with the combination of the previous projects code, create a varied amount of new scenes with interesting new lighting of the scene, materials in the schene, and focusing on said materials in the scene. </p>
 
             <h2 align="middle">Part 1: Mirror and Glass</h2>
-            <p>In Part 1 I implemented the BRDF set up for glass objects and perfect mirror objects. First for Mirrors I implemented the BRDF by simpy taking the out going ray from the surface to be the vector in object space coordinates as the vector with negative x and y direction and the same z direction, with the specturm beign that of an ideal mirror and thus the reflectance divided by the angle from the normal. Next for Glass I implementd the BRDF by first calculating if there is total internal relfection and if these is than returning the reflection as if it is a mirror, if there is not total internal reflection I calculate Schlick's Approximation and use it as our random chance paramater to decide if the ray that impacts the surface reflects our of the surface or refracts into it. If the incoming ray refracts I use snells law to calculate the outgoing ray and finaly calculate the outgoing irradiance by taking it to be that of the reflection divided by the square of the snells law factor eta.</p>
+            <p>In Part 1 I implemented the BSDF set up for glass objects and perfect mirror objects. First for Mirrors I implemented the BSDF by simpy taking the out going ray from the surface to be the vector in object space coordinates as the vector with negative x and y direction and the same z direction, with the specturm beign that of an ideal mirror and thus the reflectance divided by the angle from the normal. Next for Glass I implementd the BsDF by first calculating if there is total internal relfection and if these is than returning the reflection as if it is a mirror, if there is not total internal reflection I calculate Schlick's Approximation and use it as our random chance paramater to decide if the ray that impacts the surface reflects our of the surface or refracts into it. If the incoming ray refracts I use snells law to calculate the outgoing ray and finaly calculate the outgoing irradiance by taking it to be that of the reflection divided by the square of the snells law factor eta.</p>
             <p>Now lets look at the spheres scene and see how increasing the max number of bounces for each reveals interesting new multibounce effects. To start the first multibounce effect we witness is that at one bounce both the mirrored sphere and glass sphere are completely dark, while at two bounces the light has time to bounce onto the schene then onto the mirrored sphere then to the camera, but the light is still bouncing in the glass ball and has yet to move through to the camera. Then at 3 bounces we can see the glass ball as the light leaves it, now hitting the camera, but the light that bounces from the glass ball to other parts of the schene has yet to bounce to the camera, so the ball casts a shadow and is dark on the mirror. Then at 4 bounces the glass ball reflects form the mirrored ball to the camera, and the glass ball iluminates a spot on the ground as we would expect. Finaly we reach the maximum number of multibounce effects when the lights reflection of the mirrored ball makes it through the glass ball illuminating a patch on the wall. Its seen that this is the max number of effects since the 100 bounce version reveals no more effects.</p>
             <div align="center">
                 <table style="width=100%">
@@ -99,7 +96,7 @@
 
 
             <h2 align="middle">Part 2: Microfacet Matetials</h2>
-            <p>In part two of this project I implemented the BRDF for Microfacet Materials. This is done by calculatign the Normal Distrabution function of the incoming and outgoing rays, the Frensel term of the incoming radiance, and the shadowing masking term (which was calculated for in the starer code), then calculating the BRDF by multiplying these together and dividing them by the four times the component of the incoming and outgoing vectors normal to the surface. Finaly to find the vector to use to calculate the incoming irradiance and the outgoing pdf from this point I implemented a random sampling method that randomly samples the theta and phi angle of the incoming vector and uses these randomized values to calculate the pdf.</p>
+            <p>In part two of this project I implemented the BSDF for Microfacet Materials. This is done by calculatign the Normal Distrabution function of the incoming and outgoing rays, the Frensel term of the incoming radiance, and the shadowing masking term (which was calculated for in the starer code), then calculating the BSDF by multiplying these together and dividing them by the four times the component of the incoming and outgoing vectors normal to the surface. Finaly to find the vector to use to calculate the incoming irradiance and the outgoing pdf from this point I implemented a random sampling method that randomly samples the theta and phi angle of the incoming vector and uses these randomized values to calculate the pdf.</p>
             <p>To calculate the Normal Distrabution I first calculated the half vector h, which is the average of the normalized average of the incoming and outgoing vectors. Then using this vectof the Normal Distrabution is given by the following function</p>
             <div align="center">
                 <table style="width=100%">
@@ -210,13 +207,20 @@
 
             <h2 align="middle">Part 3: Environment light</h2>
             <p>In this third part of this project I implemented a scemea for environment lighting. Environment lighting places our schene in a full three dimensional space where ligh can and does come from all directions, this allows us to model schenes that exist in a space that is not just a black box like environment. This is done by settign an sphererical surface around our scene that is infinately far away and is the background for our scene. To use this environment to sample the lighting of the scene we take random samples of the environment in one of two ways, either through uniform spherical sampling or through importance sampling. Uniform spherical sampling simply takes a random sample in the sphere with equal probability, while importance sampling calculates the brightness of grid points on our sphere and assigns each grid point a probability that it will yeild an important value by how bright it is, we then sample points bassed on these probabilities. </p>
-            <p> Now lets look at some images rendered in the following environment</p>
+            <p> Now lets look at some images rendered in the following environment, which has the following probability density.</p>
             <div align="center">
                 <table style="width=100%">
                     <tr>
                         <td align="middle">
                             <img src="images/exrcap.JPG" width="480px" />
                             <figcaption align="middle"> This is the environmnet used in this part.</figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td align="middle">
+                            <img src="images/probability_debug.png" width="480px" />
+                            <figcaption align="middle"> This is the probabilitys of said environment.</figcaption>
                         </td>
                     </tr>
                 </table>
@@ -253,30 +257,75 @@
             </div>
 
 
+            <h2 align="middle">Part 4: Depth of Field</h2>
+            <p>In this final section of the project we implemented a depth of field model, which allows us to model scenes as if we are using a thin lens camera, not a pinhole camera. The main difference between these forms of cameras is that a pinhole camera allows us to view all objects in the scene with the same clearity as eachother no mater the depth, which although makes for good images is not how us normal humans see the world. The thin lens camera allows us to focus the image in our scene to a specific plane in the z axis and the surounding sphere as if we were close to these sections blurring those parts of the scene that fall out of these ranges, like a out eyes do when we focus on an object in the foreground vs the background. </p>
+            <p> This new thin lens camera model allows us to adjust both the focal point of the camera, or where the camera is focused to, and the appature size of the lense, which is how much more into focus the plane of focus is compared to the rest of the image. So to start lets look at a focal stack, or a set of pictures with fixed appature size and different focal points on the  CBdragon_microfacet_au file:</p>
+            <div align="center">
+                <table style="width=100%">
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb01d10.png" width="800px" />
+                            <figcaption align="middle"> This image has focal point before the dragon. </figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb01d20.png" width="800px" />
+                            <figcaption align="middle"> This image has focal point on the front of the dragon.</figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb01d30.png" width="800px" />
+                            <figcaption align="middle"> This image has focal point toward the back of the dragon.</figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb01d70.png" width="800px" />
+                            <figcaption align="middle"> This image has a focal point far behind the dragon.</figcaption>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <p>Now lets look at a sequence of for images focused to the same focal point with different appature size, till on the same CBdragon_microfacet_au file:</p>
+            <div align="center">
+                <table style="width=100%">
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb01d25.png" width="800px" />
+                            <figcaption align="middle"> This image with appature size .01. </figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb05d25.png" width="800px" />
+                            <figcaption align="middle"> This image with appature size .05.</figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb25d25.png" width="800px" />
+                            <figcaption align="middle"> This image with appature size .25.</figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td align="middle">
+                            <img src="images/CBdragonb50d25.png" width="800px" />
+                            <figcaption align="middle"> This image with appature size .50.</figcaption>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
 
-            </p><p>Here is an example of how to include a simple formula:</p>
-            <p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
-            <p>or, alternatively, you can include an SVG image of a LaTex formula.</p>
-            <p>This time it's your job to copy-paste in the rest of the sections :)</p>
 
-
-
-            <h2 align="middle">A Few Notes On Webpages</h2>
-            <p>Here are a few problems students have encountered in the past. You will probably encounter these problems at some point, so don't wait until right before the deadline to check that everything is working. Test your website on the instructional machines early!</p>
-            <ul>
-                <li>Your main report page should be called index.html.</li>
-                <li>Be sure to include and turn in all of the other files (such as images) that are linked in your report!</li>
-                <li>
-                    Use only <em>relative</em> paths to files, such as <pre>"./images/image.jpg"</pre>
-                    Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.jpg"</pre>
-                </li>
-                <li>
-                    Pay close attention to your filename extensions. Remember that on UNIX systems (such as the instructional machines), capitalization matters. <pre>.png != .jpeg != .jpg != .JPG</pre>
-                </li>
-                <li>Be sure to adjust the permissions on your files so that they are world readable. For more information on this please see this tutorial: <a href="http://www.grymoire.com/Unix/Permissions.html">http://www.grymoire.com/Unix/Permissions.html</a></li>
-                <li>And again, test your website on the instructional machines early!</li>
-            </ul>
             </table>
         </o></div>
         </o></div>
