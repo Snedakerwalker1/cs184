@@ -1,3 +1,2 @@
-# Assignment 3: PathTracer
-
-http://462cmu.github.io/asst3_pathtracer/
+Check the link for project details
+https://snedakerwalker1.github.io/cs184_project3-2/
